@@ -1,7 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 
-// import { Authenticator } from "@aws-amplify/ui-vue";
 import "@aws-amplify/ui-vue/styles.css";
 
 // import Amplify from "aws-amplify";
