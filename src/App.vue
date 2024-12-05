@@ -1,26 +1,44 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <header>
+      <h1>Trivia App</h1>
+      <amplify-authenticator></amplify-authenticator>
+    </header>
+    <div v-if="user">
+      <p>Welcome, {{ user.username }}!</p>
+      <button @click="fetchTrivia">Get Trivia Question</button>
+      <p v-if="trivia">{{ trivia.question }}</p>
+    </div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { Auth } from "aws-amplify";
+import axios from "axios";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  data() {
+    return {
+      user: null,
+      trivia: null,
+    };
+  },
+  async created() {
+    this.user = {}
+    // await Auth.currentAuthenticatedUser();
+  },
+  methods: {
+    async fetchTrivia() {
+      try {
+        const token = (await Auth.currentSession()).getIdToken().getJwtToken();
+        const response = await axios.get("YOUR_API_GATEWAY_URL/trivia", {
+          headers: { Authorization: token },
+        });
+        this.trivia = response.data;
+      } catch (error) {
+        console.error("Error fetching trivia:", error);
+      }
+    },
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
