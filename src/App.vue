@@ -2,39 +2,42 @@
   <div id="app">
     <header>
       <h1>Trivia App</h1>
-      <amplify-authenticator></amplify-authenticator>
     </header>
-    <div v-if="user">
-      <p>Welcome, {{ user.username }}!</p>
+
+    <div >
+      <p>Welcome</p>
       <button @click="fetchTrivia">Get Trivia Question</button>
-      <p v-if="trivia">{{ trivia.question }}</p>
+      <Question 
+        v-if="question" 
+        :question="question" 
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { Auth } from "aws-amplify";
 import axios from "axios";
+import Question from './components/showQuestion.vue';
 
 export default {
+  components: {
+    Question,
+  },
   data() {
     return {
-      user: null,
-      trivia: null,
+      question: null,
     };
   },
-  async created() {
-    this.user = {}
-    // await Auth.currentAuthenticatedUser();
-  },
+  
   methods: {
     async fetchTrivia() {
       try {
-        const token = (await Auth.currentSession()).getIdToken().getJwtToken();
-        const response = await axios.get("YOUR_API_GATEWAY_URL/trivia", {
-          headers: { Authorization: token },
-        });
-        this.trivia = response.data;
+        const response = await axios.get('https://7bgydjo949.execute-api.us-east-1.amazonaws.com/production/questions', {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+          });
+        this.question = JSON.parse(response.data.body);
       } catch (error) {
         console.error("Error fetching trivia:", error);
       }
