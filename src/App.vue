@@ -7,8 +7,10 @@
     <div >
       <p>Welcome</p>
       <button @click="fetchTrivia">Get Trivia Question</button>
+    
       <Question 
-        v-if="question" 
+        v-for="question in questions" 
+        :key="question.question_id" 
         :question="question" 
       />
     </div>
@@ -25,7 +27,7 @@ export default {
   },
   data() {
     return {
-      question: null,
+      questions: [], // Array to store the questions
     };
   },
   
@@ -35,9 +37,13 @@ export default {
         const response = await axios.get('https://7bgydjo949.execute-api.us-east-1.amazonaws.com/production/questions', {
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            params: {
+              category_id: 4, // You can set the category dynamically
+            },
           });
-        this.question = JSON.parse(response.data.body);
+        const results = JSON.parse(response.data.body)
+        this.questions = results.results;
       } catch (error) {
         console.error("Error fetching trivia:", error);
       }
