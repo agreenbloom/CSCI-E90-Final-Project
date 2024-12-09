@@ -39,13 +39,12 @@
         } else {
           this.selectedAnswerFeedback = "Wrong answer. Try again!";
         }
-        console.log(selectedAnswer)
         const scoreData = {
           question_id: questionID,
           answer_id: selectedAnswer.answer_id,
           is_correct: selectedAnswer.is_correct
         }
-        console.log('score data', scoreData)
+       
         try {
           const response = await axios.post(
             "https://7bgydjo949.execute-api.us-east-1.amazonaws.com/production/scores",
@@ -58,9 +57,9 @@
           );
         this.responseMessage = `Success: ${response.data.message}`;
         } catch (error) {
-          // console.error("Error updating score:", error);
-          // this.responseMessage =
-          //   error.response?.data?.message ||  "Failed to update score. Please try again.";
+          console.error("Error updating score:", error);
+          this.responseMessage =
+            error.response?.data?.message ||  "Failed to update score. Please try again.";
         }
       },
       
