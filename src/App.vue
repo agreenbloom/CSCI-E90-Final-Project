@@ -44,7 +44,6 @@ export default {
           });
         const results = JSON.parse(response.data.body)
         this.questions = results.results;
-        console.log(this.questions)
       } catch (error) {
         console.error("Error fetching trivia:", error);
       }
