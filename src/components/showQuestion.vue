@@ -3,7 +3,7 @@
       <h2>Question:  {{ question.question_text }}</h2>
       <ul>
         <li v-for="(answer, index) in question.answers" :key="index">
-          <button @click="checkAnswer(answer)">
+          <button @click="checkAnswer(question.question_id, answer)">
             {{ answer.answer_text }}
           </button>
         </li>
@@ -11,13 +11,12 @@
       <div v-if="selectedAnswerFeedback">
         {{ selectedAnswerFeedback }}
       </div>
-      <!-- <div v-if="selectedAnswer.is_correct" class="feedback-box">
-            {{ selectedAnswerFeedback }}
-      </div> -->
     </div>
   </template>
   
   <script>
+  import axios from "axios";
+
   export default {
     props: {
       question: {
@@ -32,17 +31,39 @@
       };
     },
     methods: {
-      checkAnswer( selectedAnswer) {
+      async checkAnswer( questionID, selectedAnswer) {
       // Check if the clicked answer is correct
-      // console.log('before ', this.selectedAnswerFeedback)
 
         if (selectedAnswer.is_correct) {
           this.selectedAnswerFeedback = "Correct answer!";
         } else {
           this.selectedAnswerFeedback = "Wrong answer. Try again!";
         }
-        console.log('after',this.selectedAnswerFeedback)
+        console.log(selectedAnswer)
+        const scoreData = {
+          question_id: questionID,
+          answer_id: selectedAnswer.answer_id,
+          is_correct: selectedAnswer.is_correct
+        }
+        console.log('score data', scoreData)
+        try {
+          const response = await axios.post(
+            "https://7bgydjo949.execute-api.us-east-1.amazonaws.com/production/scores",
+            scoreData,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        this.responseMessage = `Success: ${response.data.message}`;
+        } catch (error) {
+          // console.error("Error updating score:", error);
+          // this.responseMessage =
+          //   error.response?.data?.message ||  "Failed to update score. Please try again.";
+        }
       },
+      
     },
   };
   </script>
