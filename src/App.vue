@@ -39,11 +39,12 @@ export default {
                 'Content-Type': 'application/json'
             },
             params: {
-              category_id: 4, // You can set the category dynamically
+              category_id: 1, // You can set the category dynamically
             },
           });
         const results = JSON.parse(response.data.body)
         this.questions = results.results;
+        console.log(this.questions)
       } catch (error) {
         console.error("Error fetching trivia:", error);
       }
