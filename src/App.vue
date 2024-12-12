@@ -6,6 +6,15 @@
 
     <div >
       <p>Welcome</p>
+      <div>
+        <div v-if="!isAuthenticated">
+          <!-- <SignUp />
+          <LogIn @authenticated="updateAuthState" /> -->
+        </div>
+        <div v-else>
+          <!-- <LogOut @authenticated="updateAuthState" /> -->
+        </div>
+      </div>
 
       <div>
         <h1>Select a Category</h1>
@@ -28,15 +37,21 @@
 import axios from "axios";
 import Question from './components/showQuestion.vue';
 import CategorySelect from './components/categorySelect.vue';
-
+// import SignUp from './components/signUp.vue';
+// import LogOut from './components/logOut.vue';
+// import LogIn from './components/logIn.vue';
 
 export default {
   components: {
     Question,
     CategorySelect,
+    // SignUp,
+    // LogIn,
+    // LogOut,
   },
   data() {
     return {
+      isAuthenticated: false,
       questions: [], // Array to store the questions
       selectedCategoryId: null, // Holds the selected category ID
       categories: [
@@ -63,6 +78,9 @@ export default {
   },
   
   methods: {
+    updateAuthState(state) {
+      this.isAuthenticated = state;
+    },
     async fetchTrivia() {
       try {
         const response = await axios.get('https://7bgydjo949.execute-api.us-east-1.amazonaws.com/production/questions', {
