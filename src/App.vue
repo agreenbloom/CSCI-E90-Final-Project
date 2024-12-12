@@ -87,7 +87,7 @@ export default {
           headers: {
             'Content-Type': 'application/json'
           },
-          params: {
+          body: {
             category_id: this.selectedCategoryId || 17, // You can set the category dynamically
           },
         });
