@@ -1,37 +1,39 @@
 <template>
   <div>
-    <h2>Sign In</h2>
-    <form @submit.prevent="handleSignIn">
-      <input type="text" v-model="username" placeholder="Username" required />
-      <input type="password" v-model="password" placeholder="Password" required />
-      <button type="submit">Sign In</button>
+    <h2>Login</h2>
+    <form @submit.prevent="handleLogin">
+      <input v-model="username" type="text" placeholder="Username" required />
+      <input v-model="password" type="password" placeholder="Password" required />
+      <button type="submit">Login</button>
     </form>
-    <p v-if="message">{{ message }}</p>
   </div>
 </template>
 
 <script>
-import { signIn } from '@aws-amplify/auth';
+import { ref } from 'vue';
+import { signIn } from '../services/auth';
 
 export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-      message: '',
-    };
-  },
-  methods: {
-    async handleSignIn(username, password) {
+  setup() {
+    const username = ref('');
+    const password = ref('');
+
+    const handleLogin = async () => {
       try {
-        const user = await signIn(username, password);
-        this.message = 'Sign-in successful!';
-        console.log(user);
+        const result = await signIn(username.value, password.value);
+        console.log('Logged in:', result);
+        // Navigate to trivia page after successful login
+        this.$router.push('/trivia');
       } catch (error) {
-        this.message = `Error: ${error.message}`;
-        console.error(error);
+        console.error('Login error:', error);
       }
-    },
+    };
+
+    return {
+      username,
+      password,
+      handleLogin,
+    };
   },
 };
 </script>
