@@ -10,13 +10,19 @@
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
     </div>
+
+    <ConfirmSignup></ConfirmSignup>
   </template>
   
   <script>
   import { ref } from 'vue';
   import { signUp } from '../services/auth';
+  import ConfirmSignup from './confirmSignup.vue';
   
   export default {
+    components: {
+     ConfirmSignup
+    },
     setup() {
       const username = ref('');
       const email = ref('');
