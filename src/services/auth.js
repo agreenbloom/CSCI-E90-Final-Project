@@ -150,6 +150,7 @@ export function getIdToken() {
             reject(err);
           } else {
             resolve(session.getIdToken().getJwtToken()); // Return the JWT token
+            console.log('token', session.getIdToken().getJwtToken())
           }
         });
       });

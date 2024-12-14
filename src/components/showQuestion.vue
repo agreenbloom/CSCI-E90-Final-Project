@@ -15,8 +15,7 @@
   </template>
   
   <script>
-  import axios from "axios";
-
+  import { submitTriviaAnswer } from "../services/api";
   export default {
     props: {
       question: {
@@ -46,16 +45,9 @@
         }
        
         try {
-          const response = await axios.post(
-            "https://7bgydjo949.execute-api.us-east-1.amazonaws.com/production/scores",
-            scoreData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-        this.responseMessage = `Success: ${response.data.message}`;
+          
+          const response = await submitTriviaAnswer(scoreData);
+          this.responseMessage = `Success: ${response.data.message}`;
         } catch (error) {
           console.error("Error updating score:", error);
           this.responseMessage =

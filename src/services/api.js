@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getIdToken, getGuestCredentials, getCognitoUser } from './auth'; // Import the function to get the JWT token
 import { getGuestId } from './utils';
+import { config } from 'aws-sdk';
 
 const { v4: uuidv4 } = require('uuid'); // Import uuid library
 
@@ -43,20 +44,14 @@ export function confirmUserSignUp(username, confirmationCode) {
 apiClient.interceptors.request.use(
   async (config) => {
     try {
-      console.log('getting token>???')
       const token = await getIdToken(); // Get the token asynchronously
-      if (!token) {
-        console.log('getGuestTOken')
-        const guestToken = await getGuestToken();
-        config.headers['Authorization'] = `Bearer ${guestToken}`; // Add guest token to the Authorization header console.log('tokenn>')
-      } else {
-        config.headers['Authorization'] = `Bearer ${token}`; // Add token to the Authorization header
-      }
-      
+      console.log('Token being sent:', token);
+      config.headers['Authorization'] = `Bearer ${token}`; // Add the token to the Authorization header
     } catch (error) {
       console.error('Error getting the token', error);
       const guestToken = await getGuestToken();
-      config.headers['Authorization'] = `Bearer ${guestToken}`; // Add guest token to the Authorization header console.log('tokenn>')
+      console.log('Using guest token:', guestToken);
+      config.headers['Authorization'] = `Bearer ${guestToken}`; // Use the guest token if idToken fails
     }
     return config;
   },
@@ -79,10 +74,13 @@ export async function getTriviaQuestions(categoryId) {
   }
 // Function to make a POST request
 export async function submitTriviaAnswer(answerData) {
+  console.log('here>>???')
   try {
-    const response = await apiClient.post('/submit-answer', answerData);
+    console.log('config', config)
+    const response = await apiClient.post('/scores', answerData);
     return response.data;
   } catch (error) {
+    console.log("confid >>", config)
     console.error('Error submitting trivia answer', error);
     throw error;
   }
