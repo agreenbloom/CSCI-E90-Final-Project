@@ -1,56 +1,19 @@
 <template>
   <div id="app">
     <header class="triviaHeader">
-      <p>Welcome {{ currentUsrName }}</p>
-      <button v-if="loggedIn" @click="loggedOut"> Log Out</button>    
+      <p>Welcome </p>
     </header>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import { getCurrentUser, signOut } from './services/auth';
-import { ref, onMounted } from 'vue';
+
 
 export default {
   name: 'App',
   setup() {
-    // Reactive state for the current user
-    const currentUsrName = ref(null);
-    const loggedIn = ref(false); // Track login status
-
-    // Check if the user is logged in
-    const isUserLoggedIn = () => {
-      const user = getCurrentUser();
-      console.log(user);
-      currentUsrName.value = user ? user.username : null;
-      loggedIn.value = !!user; // Update login status
-      return loggedIn.value;
-    };
-
-    // Logout function
-    const loggedOut = async () => {
-      try {
-        await signOut(); // Call the signOut function
-        localStorage.removeItem('user'); // Clear user data from localStorage
-        currentUsrName.value = null; // Reset the current user name
-        loggedIn.value = false; // Update login status
-        window.location.href = '/'; // Redirect to the home page
-      } catch (error) {
-        console.error('Error logging out:', error);
-      }
-    };
-
-    // Run on component load
-    onMounted(() => {
-      isUserLoggedIn();
-    });
-
     return {
-      currentUsrName,
-      loggedIn,
-      isUserLoggedIn,
-      loggedOut,
     };
   },
 };
