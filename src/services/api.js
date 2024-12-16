@@ -1,14 +1,7 @@
 import axios from 'axios';
-import { getIdToken, getGuestCredentials, getCognitoUser } from './auth'; // Import the function to get the JWT token
-import { getGuestId } from './utils';
-import { config } from 'aws-sdk';
+import { getIdToken, getGuestCredentials, getCurrentUser, getCognitoUser} from './auth'; // Import the function to get the JWT token
+import { getGuestId, generateSessionId } from './utils';
 
-const { v4: uuidv4 } = require('uuid'); // Import uuid library
-
-// Example of generating a session ID
-function generateSessionId() {
-  return uuidv4(); // Generates a unique session ID
-}
 // Base URL of your API Gateway or backend
 const API_BASE_URL = 'https://7bgydjo949.execute-api.us-east-1.amazonaws.com/production';
 
@@ -22,7 +15,6 @@ const apiClient = axios.create({
 
  async function getGuestToken() {
   const guestCredentials = await getGuestCredentials();
-  console.log('guestCredentials', guestCredentials)
   return guestCredentials.IdentityId;  // Use the IdentityId as the token for guest users
 }
 
@@ -45,12 +37,9 @@ apiClient.interceptors.request.use(
   async (config) => {
     try {
       const token = await getIdToken(); // Get the token asynchronously
-      console.log('Token being sent:', token);
       config.headers['Authorization'] = `Bearer ${token}`; // Add the token to the Authorization header
     } catch (error) {
-      console.error('Error getting the token', error);
       const guestToken = await getGuestToken();
-      console.log('Using guest token:', guestToken);
       config.headers['Authorization'] = `Bearer ${guestToken}`; // Use the guest token if idToken fails
     }
     return config;
@@ -64,7 +53,6 @@ apiClient.interceptors.request.use(
 export async function getTriviaQuestions(categoryId) {
     try {
       const response = await apiClient.get(`questions?category_id=${categoryId}`);
-      console.log('response', response)
       const results = JSON.parse(response.data.body); // Assuming the response body is JSON formatted like { body: '{"results": [...]}' }
       return results.results;
     } catch (error) {
@@ -74,29 +62,46 @@ export async function getTriviaQuestions(categoryId) {
   }
 // Function to make a POST request
 export async function submitTriviaAnswer(answerData) {
-  console.log('here>>???')
   try {
-    console.log('config', config)
     const response = await apiClient.post('/scores', answerData);
     return response.data;
   } catch (error) {
-    console.log("confid >>", config)
     console.error('Error submitting trivia answer', error);
     throw error;
   }
 }
 
-export async function createQuizSession(data) {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/startQuiz`, data);
-      const sessionId = generateSessionId(); // Implement logic to generate a unique session ID
-      response.join({sessionId})
-      return response.data; // { sessionId: 'xxx' }
-    } catch (error) {
-      console.error('Error creating quiz session:', error);
-      throw error;
-    }
+export async function createQuizSession() {
+  console.log('HERE CREATE QUIZ SESSION');
+  
+  const currentUser = getCurrentUser();
+
+  // Ensure we have valid pool data and user
+  if (!currentUser) {
+    console.error('Missing pool data or current user');
+    throw new Error('Username and Pool information are required.');
   }
+
+  const userName = currentUser.username;
+
+  try {
+
+    // Prepare request data
+    const data = {
+      sessionId: generateSessionId(),
+      userName: userName,
+    };
+
+    // Make the POST request
+    const response = await axios.post(`${API_BASE_URL}/startQuiz`, data);
+    console.log('Quiz session created successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating quiz session:', error);
+    throw error;
+  }
+}
+
   
   // Function for quiz users to join a session
   export async function joinQuizSession(sessionId) {

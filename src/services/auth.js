@@ -19,6 +19,7 @@ export function signIn(username, password) {
     user.authenticateUser(authDetails, {
       onSuccess: (result) => {
         resolve({ result, user });
+        setUser(user);
       },
       onFailure: (err) => {
         reject(err);
@@ -65,6 +66,10 @@ export function signUp(username, email, password) {
   });
 }
 
+export function setUser(user) {
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
 export function getCognitoUser(username) {
   return new CognitoUser({
     Username: username,
@@ -77,13 +82,13 @@ export function getUserPool() {
 }
 
 export function getCurrentUser() {
+  console.log('user pool', userPool)
   return userPool.getCurrentUser();
 }
 
 
 
 export async function getGuestCredentials() {
-  console.log('here')
   try {
     // Configure the AWS Cognito Identity service
     AWS.config.region = 'us-east-1'; // Replace with your AWS region
@@ -114,6 +119,8 @@ export function signOut() {
   const currentUser = getCurrentUser();
   if (currentUser) {
     currentUser.signOut();
+    localStorage.removeItem('user');
+    console.log('User signed out successfully');
   }
 }
 
@@ -150,7 +157,6 @@ export function getIdToken() {
             reject(err);
           } else {
             resolve(session.getIdToken().getJwtToken()); // Return the JWT token
-            console.log('token', session.getIdToken().getJwtToken())
           }
         });
       });

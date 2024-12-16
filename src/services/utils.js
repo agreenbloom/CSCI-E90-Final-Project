@@ -1,3 +1,6 @@
+const { v4: uuidv4 } = require('uuid'); // Import uuid library
+
+
 // utils.js
 export function generateGuestId() {
     return 'guest_' + Math.random().toString(36).substr(2, 9);
@@ -13,3 +16,6 @@ export function generateGuestId() {
     return guestId;
   }
   
+  export function generateSessionId() {
+    return uuidv4(); // Generates a unique session ID
+  }

@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <label for="category">Select a category:</label>
-    <select id="category" v-model="selectedCategory">
+  <div class="category-select-div">
+    <label for="category" class="category-label">Select a category:</label>
+    <select id="category" v-model="selectedCategory" class="category-dropdown">
       <option v-for="category in categories" :key="category.id" :value="category.id">
         {{ category.name }}
       </option>
@@ -13,28 +13,57 @@
 export default {
   name: 'CategorySelect',
   props: {
-    modelValue: { // This is the value for v-model in Vue 3
+    modelValue: {
       type: [String, Number],
       default: null,
     },
-    categories: { // List of categories passed from parent
+    categories: {
       type: Array,
       required: true,
     },
   },
   data() {
     return {
-      selectedCategory: this.modelValue, // Bind selected category to the v-model value
+      selectedCategory: this.modelValue,
     };
   },
   watch: {
     selectedCategory(newValue) {
-      this.$emit('update:modelValue', newValue); // Emit updated category ID to parent using correct event name
+      this.$emit('update:modelValue', newValue);
     },
   },
 };
 </script>
 
 <style scoped>
-/* Add any styles you need */
+.category-select-div {
+  max-width: 300px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.category-label {
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.category-dropdown {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.category-dropdown:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
 </style>
