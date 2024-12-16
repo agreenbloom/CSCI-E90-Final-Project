@@ -1,0 +1,20 @@
+INSERT INTO categories (category_id,category_text)
+VALUES
+{1	,Books},
+{2	,Sports},
+{3	,Computers},
+{4	,Film},
+{5	,History},
+{6	,Cartoons},
+{7	,Geography},
+{8	,Television},
+{9	,Video Games},
+{10,	Vehicles},
+{11,	Music},
+{12,	Mathematics},
+{13,	Nature},
+{14,	Animals},
+{15,	Comics},
+{16,	Manga},
+{17,	General Knowledge},
+{18,	Board Games};
