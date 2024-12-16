@@ -93,7 +93,7 @@ export async function createQuizSession() {
     };
 
     // Make the POST request
-    const response = await axios.post(`${API_BASE_URL}/startQuiz`, data);
+    const response = await apiClient.post(`${API_BASE_URL}/startQuiz`, data);
     console.log('Quiz session created successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -114,3 +114,8 @@ export async function createQuizSession() {
       throw error;
     }
   }
+  export const createTriviaQuestion = async (payload) => {
+    const response = await apiClient.post(`${API_BASE_URL}/createTriviaQuestion`, payload);
+    return response.data;
+    
+};

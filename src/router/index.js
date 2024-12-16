@@ -28,7 +28,12 @@ const routes = [
     path: '/startQuiz',
     name: 'StartQuiz',
     component: () => import('../components/startTriviaGame.vue'),
-  }
+  },
+  {
+    path: '/createTriviaQuestion',
+    name: 'CreateTriviaQuestion',
+    component: () => import('../components/createTriviaQuestion.vue'),
+  },
 ];
 
 const router = createRouter({
